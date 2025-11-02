@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useCart } from "@/app/context/CartContext";
+import { useRouter } from "next/navigation";
 import {
   Star,
   ShoppingCart,
@@ -39,10 +41,78 @@ export default function ProductId() {
     sizes: [6, 8, 10, 14, 18, 20],
   };
 
+  // === States ===
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const router = useRouter();
+
+  const [wishlist, setWishlist] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("wishlist");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.discountedPrice,
+      image: selectedImage,
+      quantity: 1,
+    });
+  };
+
+  // === Save wishlist when updated ===
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  // === Handle wishlist toggle ===
+  const toggleWishlist = () => {
+    if (wishlist.includes(selectedImage)) {
+      setWishlist(wishlist.filter((img) => img !== selectedImage));
+    } else {
+      setWishlist([...wishlist, selectedImage]);
+    }
+  };
+
+  // === Handle image download ===
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = selectedImage.split("/").pop() || "image.jpg";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
+
+  // === Navigate images ===
+  const handlePrev = () => {
+    const currentIndex = product.images.indexOf(selectedImage);
+    const prevIndex =
+      (currentIndex - 1 + product.images.length) % product.images.length;
+    setSelectedImage(product.images[prevIndex]);
+  };
+
+  const handleNext = () => {
+    const currentIndex = product.images.indexOf(selectedImage);
+    const nextIndex = (currentIndex + 1) % product.images.length;
+    setSelectedImage(product.images[nextIndex]);
+  };
 
   const breadcrumbItems = [
     { label: "Homepage", href: "/" },
@@ -55,16 +125,14 @@ export default function ProductId() {
 
   return (
     <div className="flex flex-col gap-8 py-10 sm:py-20 px-4 sm:px-8 bg-white text-gray-800">
-      {/* Breadcrumb */}
+      {/* === Breadcrumb === */}
       <Breadcrumb items={breadcrumbItems} />
 
-      {/* PRODUCT SECTION */}
+      {/* === PRODUCT SECTION === */}
       <div className="flex flex-col lg:flex-row gap-10 lg:gap-[135px]">
-        {/* LEFT: Images + Icons */}
+        {/* === LEFT SIDE: Images + Icons === */}
         <div className="flex flex-row gap-4 sm:gap-6 items-start justify-center">
-          {/* === Icon Controls === */}
-
-          {/* === Main Image + Thumbnails === */}
+          {/* === Image Column === */}
           <div className="flex-1 flex flex-col items-center">
             {/* Main Image */}
             <div className="w-[280px] h-[370px] sm:w-[380px] sm:h-[500px] lg:w-[450px] lg:h-[610px]">
@@ -100,38 +168,51 @@ export default function ProductId() {
               ))}
             </div>
           </div>
+
+          {/* === Icon Controls === */}
           <div className="flex flex-col justify-between items-center h-[370px] sm:h-[500px] lg:h-[610px] py-2 sm:py-4">
             {/* Top Icons */}
             <div className="flex flex-col gap-3 sm:gap-4">
-              <button className="p-2 bg-[#F2F2F2] rounded-full shadow hover:bg-gray-100 transition">
+              <button
+                onClick={handleDownload}
+                className="p-2 bg-[#F2F2F2] rounded-full shadow hover:bg-gray-100 transition"
+                title="Download image"
+              >
                 <Download className="w-5 h-5 text-gray-700" />
               </button>
-              <button className="p-2 bg-[#F2F2F2] rounded-full shadow hover:bg-gray-100 transition">
-                <Heart className="w-5 h-5 text-gray-700" />
+
+              <button
+                onClick={toggleWishlist}
+                className={`p-2 rounded-full shadow transition ${
+                  wishlist.includes(selectedImage)
+                    ? "bg-red-100"
+                    : "bg-[#F2F2F2] hover:bg-gray-100"
+                }`}
+                title="Add to Wishlist"
+              >
+                <Heart
+                  className={`w-5 h-5 ${
+                    wishlist.includes(selectedImage)
+                      ? "text-red-500 fill-red-500"
+                      : "text-gray-700"
+                  }`}
+                />
               </button>
             </div>
 
             {/* Bottom Navigation */}
             <div className="flex flex-col gap-3 sm:gap-4">
               <button
-                onClick={() => {
-                  const currentIndex = product.images.indexOf(selectedImage);
-                  const prevIndex =
-                    (currentIndex - 1 + product.images.length) %
-                    product.images.length;
-                  setSelectedImage(product.images[prevIndex]);
-                }}
+                onClick={handlePrev}
                 className="p-2 bg-[#F2F2F2] rounded-full shadow hover:bg-gray-100 transition"
+                title="Previous"
               >
                 <ChevronLeft className="w-5 h-5 text-gray-700" />
               </button>
               <button
-                onClick={() => {
-                  const currentIndex = product.images.indexOf(selectedImage);
-                  const nextIndex = (currentIndex + 1) % product.images.length;
-                  setSelectedImage(product.images[nextIndex]);
-                }}
+                onClick={handleNext}
                 className="p-2 bg-[#F2F2F2] rounded-full shadow hover:bg-gray-100 transition"
+                title="Next"
               >
                 <ChevronRight className="w-5 h-5 text-gray-700" />
               </button>
@@ -139,11 +220,9 @@ export default function ProductId() {
           </div>
         </div>
 
-        <div className="block lg:hidden border-t border-dotted border-gray-300 my-6 w-full"></div>
-
-        {/* RIGHT: Product Details */}
+        {/* === RIGHT SIDE: Product Details === */}
         <div className="flex-1 flex flex-col gap-8 max-w-full lg:max-w-[520px]">
-          {/* Name + Price + Rating */}
+          {/* Product Info */}
           <div className="flex flex-col gap-4">
             <div>
               <p className="text-sm sm:text-base text-[#8F8F8F]">
@@ -240,14 +319,20 @@ export default function ProductId() {
             </div>
           </div>
 
-          {/* Buttons */}
+          {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 mt-4">
-            <button className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-900 transition flex-1 min-w-[140px]">
+            <button
+              onClick={handleAddToCart}
+              className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-900 transition flex-1 min-w-[140px]"
+            >
               <ShoppingCart className="w-5 h-5" />
               Add to Cart
             </button>
 
-            <button className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 border border-gray-400 text-gray-800 rounded-lg hover:bg-gray-100 transition flex-1 min-w-[140px]">
+            <button
+              onClick={() => router.push("/checkout")}
+              className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 border border-gray-400 text-gray-800 rounded-lg hover:bg-gray-100 transition flex-1 min-w-[140px]"
+            >
               <CreditCard className="w-5 h-5" />
               Checkout
             </button>

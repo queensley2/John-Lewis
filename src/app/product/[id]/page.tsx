@@ -1,0 +1,145 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
+import { useCart } from "@/app/context/CartContext"; 
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+  image: string;
+  description?: string;
+  category?: string;
+}
+
+export default function ProductDetailsPage() {
+  const { id } = useParams();
+  const router = useRouter();
+  const { addToCart } = useCart(); // ✅ access cart function
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [added, setAdded] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(
+          `https://frontendcodingtest-production.up.railway.app/api/products/${id}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch product details");
+        const data = await res.json();
+        if (data && typeof data === "object") {
+          setProduct(data);
+        } else {
+          console.error("Unexpected data structure:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  // 🛒 Handle Add to Cart
+  const handleAddToCart = () => {
+    if (!product) return;
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image || "/image5.png",
+      quantity: 1,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
+
+  if (loading)
+    return (
+      <div className="bg-white min-h-screen flex justify-center items-center text-gray-500">
+        Loading product details...
+      </div>
+    );
+
+  if (!product)
+    return (
+      <div className="bg-white min-h-screen flex justify-center items-center text-gray-500">
+        Product not found.
+      </div>
+    );
+
+  return (
+    <main className="bg-white min-h-screen text-gray-900 px-6 md:px-12 py-8">
+      {/* 🔙 Back Button */}
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-2 text-gray-700 hover:text-[#FE7622] mb-6"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="font-medium">Back</span>
+      </button>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {/* 🖼 Product Image */}
+        <div className="relative w-full h-80 md:h-[450px] bg-gray-50 rounded-lg overflow-hidden">
+          <Image
+            src={product.image || "/image5.png"}
+            alt={product.name}
+            fill
+            className="object-contain p-4"
+          />
+        </div>
+
+        {/* 📝 Product Info */}
+        <div className="flex flex-col justify-center">
+          <h1 className="text-2xl md:text-3xl font-semibold mb-4">
+            {product.name}
+          </h1>
+
+          <p className="text-[#FE7622] text-xl font-semibold mb-4">
+            ₦{product.price?.toLocaleString()}
+          </p>
+
+          {product.description && (
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              {product.description}
+            </p>
+          )}
+
+          {product.category && (
+            <p className="text-sm text-gray-500 mb-3">
+              Category:{" "}
+              <span className="capitalize font-medium text-gray-800">
+                {product.category}
+              </span>
+            </p>
+          )}
+
+          {product.stock !== undefined && (
+            <p className="text-sm text-gray-500 mb-8">
+              Stock:{" "}
+              <span className="font-medium text-gray-800">{product.stock}</span>
+            </p>
+          )}
+
+          {/* 🛒 Add to Cart Button */}
+          <button
+            onClick={handleAddToCart}
+            className="w-full md:w-1/2 bg-[#FE7622] text-white py-3 rounded-lg font-medium hover:bg-[#e65f14] transition"
+          >
+            {added ? "✅ Added to Cart" : "Add to Cart"}
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+}

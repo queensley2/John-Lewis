@@ -1,120 +1,104 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Star } from "lucide-react";
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
-  description: string;
-  rating: number;
-  sold: number;
-  image: string;
+  category: string;
+  stock: number;
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Whistle",
-    price: 26,
-    description: "Wide Leg Cropped Jeans, Denim",
-    rating: 4.8,
-    sold: 1238,
-    image: "/product1.png",
-  },
-  {
-    id: 2,
-    name: "John Lewis ANYDAY",
-    price: 26,
-    description: "Long Sleeve Utility Shirt, Navy",
-    rating: 4.8,
-    sold: 1238,
-    image: "/product2.png",
-  },
-  {
-    id: 3,
-    name: "John Lewis ANYDAY",
-    price: 32,
-    description: "Stripe Curved Hem Shirt, Blue",
-    rating: 4.5,
-    sold: 620,
-    image: "/product3.png",
-  },
-  {
-    id: 4,
-    name: "John Lewis ANYDAY",
-    price: 40,
-    description: "Denim Overshirt, Mid Wash",
-    rating: 4.6,
-    sold: 238,
-    image: "/product4.png",
-  },
-  {
-    id: 5,
-    name: "John Lewis",
-    price: 79,
-    description: "Linen Blazer, Navy",
-    rating: 4.8,
-    sold: 1238,
-    image: "/product5.png",
-  },
-];
+export default function PopularProduct() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function RelatedProducts() {
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(
+          "https://frontendcodingtest-production.up.railway.app/api/products"
+        );
+        const data = await res.json();
+
+        if (data.products && Array.isArray(data.products)) {
+          setProducts(data.products);
+        } else {
+          console.error("Invalid product response structure:", data);
+          setProducts([]);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <section className="w-full max-w-6xl mx-auto mt-20 mb-20">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl text-[#141414] font-semibold">
-          Related Product
+          Related Products
         </h2>
         <button className="text-[#525252] hover:underline text-base">
           View All
         </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        {products.map((product) => (
-          <div key={product.id} className="bg-white rounded-lg  transition p-2">
-            <div className="relative w-full h-56">
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="object-cover rounded-md"
-                sizes="(max-width: 768px) 100vw, 20vw"
-              />
-            </div>
+      {loading ? (
+        <p className="text-gray-500 text-center py-10 text-lg">
+          Loading products...
+        </p>
+      ) : products.length === 0 ? (
+        <p className="text-gray-500 text-center py-10 text-lg">
+          No products found.
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          {products.map((product) => (
+            <Link
+              key={product.id}
+              href={`/product/${product.id}`}
+              className="bg-white rounded-lg transition p-2 hover:shadow-md hover:scale-[1.02] duration-200"
+            >
+              <div className="relative w-full h-56 bg-gray-100 rounded-md flex items-center justify-center">
+                {/* Placeholder image since API doesn’t provide one */}
+                <Image
+                  src="/image4.png"
+                  alt={product.name}
+                  width={150}
+                  height={150}
+                  className="object-contain"
+                />
+              </div>
 
-            <div className="flex flex-col mt-2 gap-2">
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col mt-2 gap-2">
                 <div>
-                  <h3 className="font-semibold text-lg text-[#292929]">
+                  <h3 className="font-semibold text-lg text-[#292929] line-clamp-1">
                     {product.name}
                   </h3>
                   <p className="font-semibold text-[#141414] text-xl mt-1">
-                    ${product.price}
+                    ₦{product.price}
                   </p>
                 </div>
-                <p className="text-gray-500 text-base text-[#7A7A7A]">
-                  {product.description}
+                <p className="text-gray-500 text-sm capitalize">
+                  Category: {product.category}
+                </p>
+                <p className="text-gray-500 text-sm capitalize">
+                  Stock: {product.stock}
                 </p>
               </div>
-
-              <div className="flex items-center text-xs text-gray-600 mt-1">
-                <Star className="w-[24] h-[24] text-yellow-500 fill-yellow-500 mr-1" />
-                <span className="text-base text-[#0B0F0E]">
-                  {product.rating}
-                </span>
-                <span className="mx-1">·</span>
-                <span className="text-base text-[#666666]">
-                  {product.sold} Sold
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
