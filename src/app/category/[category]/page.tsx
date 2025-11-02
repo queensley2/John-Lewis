@@ -10,9 +10,21 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  image: string;
+  image?: string;
   description?: string;
 }
+
+// ✅ Define manual image mappings by category or product name
+  const imageMap: Record<string, string> = {
+    
+    running: "/shoe.jpg",
+    wireless: "/headphone.jpg",
+    yoga: "/yoga mat.jpg",
+    headset: "/products/headset.png",
+    laptop: "/laptopstand.jpg",
+    coffee: "/coffee.jpg",
+  };
+
 
 export default function CategoryPage() {
   const { category } = useParams();
@@ -20,6 +32,7 @@ export default function CategoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  
   useEffect(() => {
     if (!category) return;
 
@@ -29,19 +42,26 @@ export default function CategoryPage() {
           `https://frontendcodingtest-production.up.railway.app/api/categories/${category}/products`
         );
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch products");
-        }
+        if (!res.ok) throw new Error("Failed to fetch products");
 
         const data = await res.json();
+        const fetchedProducts = Array.isArray(data.products)
+          ? data.products
+          : Array.isArray(data)
+          ? data
+          : [];
 
-        if (Array.isArray(data.products)) {
-          setProducts(data.products);
-        } else if (Array.isArray(data)) {
-          setProducts(data);
-        } else {
-          console.error("Unexpected data structure:", data);
-        }
+        // ✅ Apply manual image assignment
+        const updatedProducts = fetchedProducts.map((product: Product) => {
+          const productName = product.name.toLowerCase();
+          const matchedImage =
+            Object.entries(imageMap).find(([key]) =>
+              productName.includes(key)
+            )?.[1] || "/image5.png"; // fallback image
+          return { ...product, image: matchedImage };
+        });
+
+        setProducts(updatedProducts);
       } catch (error) {
         console.error("Error fetching category products:", error);
       } finally {
@@ -56,11 +76,11 @@ export default function CategoryPage() {
     <main className="bg-white min-h-screen text-gray-900 px-6 md:px-12 py-8">
       {/* 🔙 Back Button */}
       <button
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/category")}
         className="flex items-center gap-2 text-gray-700 hover:text-[#FE7622] mb-4"
       >
         <ArrowLeft className="w-5 h-5" />
-        <span className="font-medium">Back to Home</span>
+        <span className="font-medium">Back to Categories</span>
       </button>
 
       {/* 🧭 Breadcrumb */}

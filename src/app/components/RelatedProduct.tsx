@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
 
 interface Product {
   id: string;
@@ -11,12 +10,39 @@ interface Product {
   price: number;
   category: string;
   stock: number;
+  image?: string; // ✅ added image field
 }
 
 export default function PopularProduct() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 🖼️ Map of keywords to images
+  const imageMap: Record<string, string> = useMemo(
+    () => ({
+      running: "/shoe.jpg",
+      wireless: "/headphone.jpg",
+      yoga: "/yoga mat.jpg",
+      headset: "/products/headset.png",
+      laptop: "/laptopstand.jpg",
+      coffee: "/coffee.jpg",
+      default: "/image5.png",
+    }),
+    []
+  );
+
+  // 🧩 Helper to select image by name
+  const getImageForProduct = (productName: string): string => {
+    const lowerName = productName.toLowerCase();
+    for (const [keyword, imagePath] of Object.entries(imageMap)) {
+      if (keyword !== "default" && lowerName.includes(keyword)) {
+        return imagePath;
+      }
+    }
+    return imageMap.default;
+  };
+
+  // 🧭 Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -26,7 +52,12 @@ export default function PopularProduct() {
         const data = await res.json();
 
         if (data.products && Array.isArray(data.products)) {
-          setProducts(data.products);
+          // ✅ assign images before setting state
+          const productsWithImages = data.products.map((p: Product) => ({
+            ...p,
+            image: getImageForProduct(p.name),
+          }));
+          setProducts(productsWithImages);
         } else {
           console.error("Invalid product response structure:", data);
           setProducts([]);
@@ -39,10 +70,11 @@ export default function PopularProduct() {
     };
 
     fetchProducts();
-  }, []);
+  }, [imageMap]);
 
   return (
     <section className="w-full max-w-6xl mx-auto mt-20 mb-20">
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl text-[#141414] font-semibold">
           Related Products
@@ -52,6 +84,7 @@ export default function PopularProduct() {
         </button>
       </div>
 
+      {/* Loading or empty states */}
       {loading ? (
         <p className="text-gray-500 text-center py-10 text-lg">
           Loading products...
@@ -61,17 +94,19 @@ export default function PopularProduct() {
           No products found.
         </p>
       ) : (
+        // 🛍️ Product grid
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {products.map((product) => (
             <Link
               key={product.id}
-              href={`/product/${product.id}`}
-              className="bg-white rounded-lg transition p-2 hover:shadow-md hover:scale-[1.02] duration-200"
+              href={{
+                pathname: `/product/${product.id}`,
+                query: { image: product.image || "/image5.png" }, // ✅ Pass image to details page
+              }}
             >
               <div className="relative w-full h-56 bg-gray-100 rounded-md flex items-center justify-center">
-                {/* Placeholder image since API doesn’t provide one */}
                 <Image
-                  src="/image4.png"
+                  src={product.image || "/image5.png"} // ✅ Use same image displayed here
                   alt={product.name}
                   width={150}
                   height={150}
@@ -85,7 +120,7 @@ export default function PopularProduct() {
                     {product.name}
                   </h3>
                   <p className="font-semibold text-[#141414] text-xl mt-1">
-                    ₦{product.price}
+                    ₦{product.price.toLocaleString()}
                   </p>
                 </div>
                 <p className="text-gray-500 text-sm capitalize">

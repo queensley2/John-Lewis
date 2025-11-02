@@ -1,32 +1,35 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { useCart } from "@/app/context/CartContext"; 
+import { useCart } from "@/app/context/CartContext";
 
 interface Product {
   id: number;
   name: string;
   price: number;
   stock: number;
-  image: string;
+  image?: string;
   description?: string;
   category?: string;
 }
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const { addToCart } = useCart(); // ✅ access cart function
+  const { addToCart } = useCart();
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
 
+  const passedImage = searchParams.get("image"); // ✅ get image from query
+
   useEffect(() => {
     if (!id) return;
-
     const fetchProduct = async () => {
       try {
         const res = await fetch(
@@ -34,29 +37,23 @@ export default function ProductDetailsPage() {
         );
         if (!res.ok) throw new Error("Failed to fetch product details");
         const data = await res.json();
-        if (data && typeof data === "object") {
-          setProduct(data);
-        } else {
-          console.error("Unexpected data structure:", data);
-        }
+        setProduct(data);
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProduct();
   }, [id]);
 
-  // 🛒 Handle Add to Cart
   const handleAddToCart = () => {
     if (!product) return;
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image || "/image5.png",
+      image: passedImage || product.image || "/image5.png", // ✅ use passed image
       quantity: 1,
     });
     setAdded(true);
@@ -79,7 +76,6 @@ export default function ProductDetailsPage() {
 
   return (
     <main className="bg-white min-h-screen text-gray-900 px-6 md:px-12 py-8">
-      {/* 🔙 Back Button */}
       <button
         onClick={() => router.back()}
         className="flex items-center gap-2 text-gray-700 hover:text-[#FE7622] mb-6"
@@ -89,22 +85,19 @@ export default function ProductDetailsPage() {
       </button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* 🖼 Product Image */}
         <div className="relative w-full h-80 md:h-[450px] bg-gray-50 rounded-lg overflow-hidden">
           <Image
-            src={product.image || "/image5.png"}
+            src={passedImage || product.image || "/image5.png"} // ✅ prioritized
             alt={product.name}
             fill
             className="object-contain p-4"
           />
         </div>
 
-        {/* 📝 Product Info */}
         <div className="flex flex-col justify-center">
           <h1 className="text-2xl md:text-3xl font-semibold mb-4">
             {product.name}
           </h1>
-
           <p className="text-[#FE7622] text-xl font-semibold mb-4">
             ₦{product.price?.toLocaleString()}
           </p>
@@ -131,7 +124,6 @@ export default function ProductDetailsPage() {
             </p>
           )}
 
-          {/* 🛒 Add to Cart Button */}
           <button
             onClick={handleAddToCart}
             className="w-full md:w-1/2 bg-[#FE7622] text-white py-3 rounded-lg font-medium hover:bg-[#e65f14] transition"
