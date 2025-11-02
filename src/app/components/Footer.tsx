@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 export default function Footer() {
+  const icons = [Facebook, Twitter, Instagram, Linkedin];
   return (
     <footer className="bg-[#F2F2F2] text-[#0B0F0E] px-10 md:px-20 pt-12 pb-6">
       {/* === Top Section === */}
@@ -49,7 +50,7 @@ export default function Footer() {
 
           {/* Social Icons */}
           <div className="flex items-center gap-3 mt-4">
-            {[Facebook, Twitter, Instagram, Linkedin].map((Icon, index) => (
+            {icons.map((Icon, index) => (
               <Link
                 href="#"
                 key={index}
@@ -154,7 +155,7 @@ export default function Footer() {
           </div>
 
           {/* === DESKTOP VIEW: All 3 side by side === */}
-          <div className="hidden md:flex gap-20">
+          <div className="hidden md:flex flex-wrap gap-20">
             {/* Shop */}
             <div>
               <h3 className="text-[#141414] font-semibold text-lg mb-4">

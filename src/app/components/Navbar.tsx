@@ -27,7 +27,7 @@ export default function Navbar() {
 
   const router = useRouter();
   const { cart } = useCart();
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+const totalItems = cart.length;
 
   // ✅ Fetch categories from API
   useEffect(() => {

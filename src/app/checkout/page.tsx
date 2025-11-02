@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 
 interface CheckoutForm {
-  name: string;
   email: string;
   address: string;
 }
@@ -21,7 +20,6 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const [form, setForm] = useState<CheckoutForm>({
-    name: "",
     email: "",
     address: "",
   });
@@ -55,11 +53,12 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            customer: form,
             items: cart.map((item) => ({
-              id: item.id,
+              product_id: item.id, 
               quantity: item.quantity,
             })),
+            shipping_address: form.address, 
+            email: form.email, 
           }),
         }
       );
@@ -70,7 +69,7 @@ export default function CheckoutPage() {
         throw new Error(data.message || "Checkout failed");
       }
 
-      setMessage({ type: "success", text: "Checkout successful!" });
+      setMessage({ type: "success", text: "✅ Checkout successful!" });
       clearCart();
 
       setTimeout(() => router.push("/"), 2000);
@@ -98,21 +97,7 @@ export default function CheckoutPage() {
             onSubmit={handleCheckout}
             className="bg-gray-50 border rounded-lg p-6 shadow-sm flex flex-col gap-4"
           >
-            <h2 className="text-xl font-semibold mb-2">Billing Information</h2>
-
-            <div>
-              <label className="block text-sm text-gray-600 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FE7622]"
-              />
-            </div>
+            <h2 className="text-xl font-semibold mb-2">Shipping Information</h2>
 
             <div>
               <label className="block text-sm text-gray-600 mb-1">Email</label>
@@ -122,13 +107,13 @@ export default function CheckoutPage() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FE7622]"
+                className="w-full border rounded-md  px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FE7622]"
               />
             </div>
 
             <div>
               <label className="block text-sm text-gray-600 mb-1">
-                Address
+                Shipping Address
               </label>
               <textarea
                 name="address"
@@ -136,7 +121,7 @@ export default function CheckoutPage() {
                 onChange={handleChange}
                 required
                 rows={3}
-                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FE7622]"
+                className="w-full border text-black rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FE7622]"
               />
             </div>
 
