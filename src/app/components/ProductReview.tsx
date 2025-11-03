@@ -83,7 +83,7 @@ export default function ProductReview() {
   const circleCircumference = 2 * Math.PI * circleRadius;
   const circleProgress = (avgRating / 5) * circleCircumference;
 
-  // --- Like & Dislike handlers ---
+  //  Like & Dislike handlers 
   const handleLike = (id: number) => {
     setReviews((prev) =>
       prev.map((r) => (r.id === id ? { ...r, likes: r.likes + 1 } : r))
@@ -104,7 +104,7 @@ export default function ProductReview() {
         Product Reviews
       </h2>
 
-      {/* === TOP SECTION === */}
+      {/*  TOP SECTION  */}
       <div className="outline-dashed rounded-lg p-6 mb-8 grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
         {/* Left: Circular Rating */}
         <div className="flex items-center justify-center md:justify-start gap-6">
@@ -183,7 +183,7 @@ export default function ProductReview() {
         </div>
       </div>
 
-      {/* === BOTTOM SECTION === */}
+      {/*  BOTTOM SECTION  */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Left Filters */}
         <div className="hidden md:block col-span-1 outline-dashed rounded-lg p-4 space-y-6">

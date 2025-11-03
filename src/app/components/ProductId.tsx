@@ -68,12 +68,12 @@ export default function ProductId() {
     });
   };
 
-  // === Save wishlist when updated ===
+  //  Save wishlist when updated 
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
 
-  // === Handle wishlist toggle ===
+  //  Handle wishlist toggle 
   const toggleWishlist = () => {
     if (wishlist.includes(selectedImage)) {
       setWishlist(wishlist.filter((img) => img !== selectedImage));
@@ -82,7 +82,7 @@ export default function ProductId() {
     }
   };
 
-  // === Handle image download ===
+  //  Handle image download 
   const handleDownload = async () => {
     try {
       const response = await fetch(selectedImage);
@@ -100,7 +100,7 @@ export default function ProductId() {
     }
   };
 
-  // === Navigate images ===
+  // Navigate images 
   const handlePrev = () => {
     const currentIndex = product.images.indexOf(selectedImage);
     const prevIndex =
@@ -125,14 +125,14 @@ export default function ProductId() {
 
   return (
     <div className="flex flex-col gap-8 py-10 sm:py-20 px-4 sm:px-8 bg-white text-gray-800">
-      {/* === Breadcrumb === */}
+      {/*  Breadcrumb  */}
       <Breadcrumb items={breadcrumbItems} />
 
-      {/* === PRODUCT SECTION === */}
+      {/*  PRODUCT SECTION  */}
       <div className="flex flex-col lg:flex-row gap-10 lg:gap-[135px]">
-        {/* === LEFT SIDE: Images + Icons === */}
+        {/*  LEFT SIDE: Images + Icons  */}
         <div className="flex flex-row gap-4 sm:gap-6 items-start justify-center">
-          {/* === Image Column === */}
+          {/*  Image Column  */}
           <div className="flex-1 flex flex-col items-center">
             {/* Main Image */}
             <div className="w-[280px] h-[370px] sm:w-[380px] sm:h-[500px] lg:w-[450px] lg:h-[610px]">
@@ -169,7 +169,7 @@ export default function ProductId() {
             </div>
           </div>
 
-          {/* === Icon Controls === */}
+          {/*  Icon Controls  */}
           <div className="flex flex-col justify-between items-center h-[370px] sm:h-[500px] lg:h-[610px] py-2 sm:py-4">
             {/* Top Icons */}
             <div className="flex flex-col gap-3 sm:gap-4">
@@ -220,7 +220,7 @@ export default function ProductId() {
           </div>
         </div>
 
-        {/* === RIGHT SIDE: Product Details === */}
+        {/*  RIGHT SIDE: Product Details  */}
         <div className="flex-1 flex flex-col gap-8 max-w-full lg:max-w-[520px]">
           {/* Product Info */}
           <div className="flex flex-col gap-4">
@@ -299,8 +299,8 @@ export default function ProductId() {
           {/* Sizes */}
           <div>
             <h2 className="text-lg sm:text-xl font-semibold text-[#8F8F8F] mb-2">
-              Size:{" "}
-              <span className="text-[#292929]">{selectedSize ?? "None"}</span>
+              Size:
+              <span className="text-[#292929]">{selectedSize ?? 6 }</span>
             </h2>
             <div className="flex flex-wrap gap-3">
               {product.sizes.map((size) => (

@@ -14,7 +14,7 @@ interface Product {
   description?: string;
 }
 
-// ✅ Define manual image mappings by category or product name
+// Define manual image mappings by category or product name
   const imageMap: Record<string, string> = {
     
     running: "/shoe.jpg",
@@ -51,7 +51,7 @@ export default function CategoryPage() {
           ? data
           : [];
 
-        // ✅ Apply manual image assignment
+        //  Apply manual image assignment
         const updatedProducts = fetchedProducts.map((product: Product) => {
           const productName = product.name.toLowerCase();
           const matchedImage =
@@ -74,7 +74,7 @@ export default function CategoryPage() {
 
   return (
     <main className="bg-white min-h-screen text-gray-900 px-6 md:px-12 py-8">
-      {/* 🔙 Back Button */}
+      {/*  Back Button */}
       <button
         onClick={() => router.push("/category")}
         className="flex items-center gap-2 text-gray-700 hover:text-[#FE7622] mb-4"
@@ -83,7 +83,7 @@ export default function CategoryPage() {
         <span className="font-medium">Back to Categories</span>
       </button>
 
-      {/* 🧭 Breadcrumb */}
+      {/*  Breadcrumb */}
       <nav
         className="flex flex-wrap items-center text-sm text-gray-500 mb-6"
         aria-label="Breadcrumb"

@@ -26,7 +26,7 @@ export default function ProductDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
 
-  const passedImage = searchParams.get("image"); // ✅ get image from query
+  const passedImage = searchParams.get("image"); 
 
   useEffect(() => {
     if (!id) return;
@@ -53,7 +53,7 @@ export default function ProductDetailsPage() {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: passedImage || product.image || "/image5.png", // ✅ use passed image
+      image: passedImage || product.image || "/image5.png", 
       quantity: 1,
     });
     setAdded(true);
@@ -87,7 +87,7 @@ export default function ProductDetailsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="relative w-full h-80 md:h-[450px] bg-gray-50 rounded-lg overflow-hidden">
           <Image
-            src={passedImage || product.image || "/image5.png"} // ✅ prioritized
+            src={passedImage || product.image || "/image5.png"} 
             alt={product.name}
             fill
             className="object-contain p-4"

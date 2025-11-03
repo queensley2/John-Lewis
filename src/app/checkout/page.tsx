@@ -92,7 +92,7 @@ export default function CheckoutPage() {
         <p className="text-gray-600 text-lg">Your cart is empty.</p>
       ) : (
         <div className="grid md:grid-cols-2 gap-10">
-          {/* 🧾 Left — Customer Info Form */}
+          {/*  Left — Customer Info Form */}
           <form
             onSubmit={handleCheckout}
             className="bg-gray-50 border rounded-lg p-6 shadow-sm flex flex-col gap-4"
@@ -153,7 +153,7 @@ export default function CheckoutPage() {
             )}
           </form>
 
-          {/* 🛍️ Right — Order Summary */}
+          {/*  Right — Order Summary */}
           <div className="bg-gray-50 border rounded-lg p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
             <ul className="divide-y">

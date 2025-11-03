@@ -33,7 +33,7 @@ export default function CategoriesPage() {
 
   return (
     <main className="bg-white min-h-screen text-gray-900 px-6 md:px-12 py-8">
-      {/* 🔙 Back Button */}
+      {/*  Back Button */}
       <Link
         href="/"
         className="flex items-center gap-2 text-gray-700 hover:text-[#FE7622] mb-4"
@@ -42,7 +42,7 @@ export default function CategoriesPage() {
         <span className="font-medium">Back to Home</span>
       </Link>
 
-      {/* 🧭 Breadcrumb */}
+      {/*  Breadcrumb */}
       <nav
         className="flex items-center text-sm text-gray-500 mb-6"
         aria-label="Breadcrumb"

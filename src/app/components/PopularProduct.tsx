@@ -10,14 +10,14 @@ interface Product {
   price: number;
   category: string;
   stock: number;
-  image?: string; // ✅ added image field
+  image?: string;
 }
 
 export default function PopularProduct() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🖼️ Map of keywords to images
+  //  Map of keywords to images
   const imageMap: Record<string, string> = useMemo(
     () => ({
       running: "/shoe.jpg",
@@ -31,7 +31,7 @@ export default function PopularProduct() {
     []
   );
 
-  // 🧩 Helper to select image by name
+  //  Helper to select image by name
   const getImageForProduct = (productName: string): string => {
     const lowerName = productName.toLowerCase();
     for (const [keyword, imagePath] of Object.entries(imageMap)) {
@@ -42,7 +42,7 @@ export default function PopularProduct() {
     return imageMap.default;
   };
 
-  // 🧭 Fetch products
+  //  Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -52,7 +52,7 @@ export default function PopularProduct() {
         const data = await res.json();
 
         if (data.products && Array.isArray(data.products)) {
-          // ✅ assign images before setting state
+          //  assign images before setting state
           const productsWithImages = data.products.map((p: Product) => ({
             ...p,
             image: getImageForProduct(p.name),
@@ -94,19 +94,19 @@ export default function PopularProduct() {
           No products found.
         </p>
       ) : (
-        // 🛍️ Product grid
+        // Product grid
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {products.map((product) => (
             <Link
               key={product.id}
               href={{
                 pathname: `/product/${product.id}`,
-                query: { image: product.image || "/image5.png" }, // ✅ Pass image to details page
+                query: { image: product.image || "/image5.png" },
               }}
             >
               <div className="relative w-full h-56 bg-gray-100 rounded-md flex items-center justify-center">
                 <Image
-                  src={product.image || "/image5.png"} // ✅ Use same image displayed here
+                  src={product.image || "/image5.png"}
                   alt={product.name}
                   width={150}
                   height={150}

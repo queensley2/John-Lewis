@@ -29,7 +29,7 @@ export default function Navbar() {
   const { cart } = useCart();
 const totalItems = cart.length;
 
-  // ✅ Fetch categories from API
+  //  Fetch categories from API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -51,7 +51,7 @@ const totalItems = cart.length;
     fetchCategories();
   }, []);
 
-  // ✅ Handle search submit
+  //  Handle search submit
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -64,14 +64,14 @@ const totalItems = cart.length;
   return (
     <nav className="bg-white relative">
       <div className="flex justify-between h-[60px] px-5 md:px-10">
-        {/* === Logo === */}
+        {/*  Logo  */}
         <Link href="/" className="flex items-center">
           <Image src={logo} alt="brand logo" width={140} height={32} priority />
         </Link>
 
-        {/* === Desktop Menu === */}
+        {/*  Desktop Menu  */}
         <div className="hidden md:flex gap-6 items-center text-sm font-medium text-gray-700 relative">
-          {/* 🔍 Search Icon */}
+          {/*  Search Icon */}
           <div className="relative">
             <Search
               className="w-5 h-5 cursor-pointer hover:text-black"
@@ -99,7 +99,7 @@ const totalItems = cart.length;
             )}
           </div>
 
-          {/* === Categories Dropdown === */}
+          {/*  Categories Dropdown  */}
           <div
             className="relative flex items-center gap-1 cursor-pointer"
             onMouseEnter={() => setShowDropdown(true)}
@@ -129,7 +129,7 @@ const totalItems = cart.length;
             )}
           </div>
 
-          {/* === Other Desktop Links === */}
+          {/*  Other Desktop Links  */}
           <Link
             href="/login"
             className="flex items-center gap-1 text-base text-[#141414] font-medium hover:text-black"
@@ -149,7 +149,7 @@ const totalItems = cart.length;
           </Link>
         </div>
 
-        {/* === Mobile Icons === */}
+        {/*  Mobile Icons  */}
         <div className="flex items-center gap-5 md:hidden">
           <Search
             className="w-5 h-5 cursor-pointer text-black"
@@ -176,7 +176,7 @@ const totalItems = cart.length;
         </div>
       </div>
 
-      {/* 🔍 Mobile Search Field */}
+      {/*  Mobile Search Field */}
       {searchOpen && (
         <form
           onSubmit={handleSearch}
@@ -198,7 +198,7 @@ const totalItems = cart.length;
         </form>
       )}
 
-      {/* === Mobile Dropdown Menu === */}
+      {/*  Mobile Dropdown Menu  */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 py-4 px-6 flex flex-col gap-4 text-gray-800 text-base font-medium">
           <button
