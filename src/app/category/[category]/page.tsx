@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, ArrowLeft } from "lucide-react";
+import { getApiConfig } from "@/lib/api-config";
+
 
 interface Product {
   id: number;
@@ -31,6 +33,8 @@ export default function CategoryPage() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { baseURL, headers } = getApiConfig();
+
 
   
   useEffect(() => {
@@ -38,9 +42,13 @@ export default function CategoryPage() {
 
     const fetchProducts = async () => {
       try {
-        const res = await fetch(
-          `https://frontendcodingtest-production.up.railway.app/api/categories/${category}/products`, { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-        );
+       const res = await fetch(
+         `${baseURL}/api/categories/${category}/products`,
+         {
+           method: "GET",
+           headers: headers,
+         }
+       );
 
         if (!res.ok) throw new Error("Failed to fetch products");
 

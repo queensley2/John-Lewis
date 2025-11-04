@@ -3,17 +3,24 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight } from "lucide-react";
+import { getApiConfig } from "@/lib/api-config";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+    const { baseURL, headers } = getApiConfig();
+  
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch(
-          "https://frontendcodingtest-production.up.railway.app/api/categories", { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-        );
+         const res = await fetch(
+           `${baseURL}/api/categories`,
+           {
+             method: "GET",
+             headers: headers,
+           }
+         );
         const data = await res.json();
 
         if (Array.isArray(data.categories)) {
