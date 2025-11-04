@@ -33,7 +33,7 @@ export default function ProductDetailsPage() {
     const fetchProduct = async () => {
       try {
         const res = await fetch(
-          `https://frontendcodingtest-production.up.railway.app/api/products/${id}`
+          `https://frontendcodingtest-production.up.railway.app/api/products/${id}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } }
         );
         if (!res.ok) throw new Error("Failed to fetch product details");
         const data = await res.json();

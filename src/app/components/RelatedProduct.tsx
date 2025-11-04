@@ -47,7 +47,7 @@ export default function PopularProduct() {
     const fetchProducts = async () => {
       try {
         const res = await fetch(
-          "https://frontendcodingtest-production.up.railway.app/api/products"
+          "https://frontendcodingtest-production.up.railway.app/api/products", { method: 'GET', headers: { 'Content-Type': 'application/json' } }
         );
         const data = await res.json();
 

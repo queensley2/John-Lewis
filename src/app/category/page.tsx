@@ -12,7 +12,7 @@ export default function CategoriesPage() {
     const fetchCategories = async () => {
       try {
         const res = await fetch(
-          "https://frontendcodingtest-production.up.railway.app/api/categories"
+          "https://frontendcodingtest-production.up.railway.app/api/categories", { method: 'GET', headers: { 'Content-Type': 'application/json' } }
         );
         const data = await res.json();
 

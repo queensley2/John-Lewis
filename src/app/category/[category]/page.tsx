@@ -39,7 +39,7 @@ export default function CategoryPage() {
     const fetchProducts = async () => {
       try {
         const res = await fetch(
-          `https://frontendcodingtest-production.up.railway.app/api/categories/${category}/products`
+          `https://frontendcodingtest-production.up.railway.app/api/categories/${category}/products`, { method: 'GET', headers: { 'Content-Type': 'application/json' } }
         );
 
         if (!res.ok) throw new Error("Failed to fetch products");
