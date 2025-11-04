@@ -5,6 +5,7 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { useCart } from "@/app/context/CartContext";
+import { getApiConfig } from "@/lib/api-config";
 
 interface Product {
   id: number;
@@ -25,6 +26,7 @@ export default function ProductDetailsPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
+    const { baseURL, headers } = getApiConfig();
 
   const passedImage = searchParams.get("image"); 
 
@@ -33,7 +35,7 @@ export default function ProductDetailsPage() {
     const fetchProduct = async () => {
       try {
         const res = await fetch(
-          `https://frontendcodingtest-production.up.railway.app/api/products/${id}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+          `${baseURL}/api/products/${id}`, { method: 'GET', headers: headers }
         );
         if (!res.ok) throw new Error("Failed to fetch product details");
         const data = await res.json();

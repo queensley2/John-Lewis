@@ -2,6 +2,7 @@
 
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { getApiConfig } from "@/lib/api-config";
 
 interface RegisterForm {
   name: string;
@@ -18,6 +19,7 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+    const { baseURL, headers } = getApiConfig();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,10 +33,9 @@ export default function RegisterPage() {
 
     try {
       const res = await fetch(
-        "https://frontendcodingtest-production.up.railway.app/api/auth/register",
-        {
+`${baseURL}/api/auth/register`,        {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: headers,
           body: JSON.stringify(form),
         }
       );

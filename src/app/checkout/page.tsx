@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useCart } from "@/app/context/CartContext";
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { getApiConfig } from "@/lib/api-config";
 
 interface CheckoutForm {
   email: string;
@@ -29,6 +30,8 @@ export default function CheckoutPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+      const { baseURL, headers } = getApiConfig();
+  
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -48,8 +51,7 @@ export default function CheckoutPage() {
 
     try {
       const response = await fetch(
-        "https://frontendcodingtest-production.up.railway.app/api/checkout",
-        {
+`${baseURL}/api/checkout`,        {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

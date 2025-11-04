@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getApiConfig } from "@/lib/api-config";
 
 interface Product {
   id: string;
@@ -10,12 +11,14 @@ interface Product {
   price: number;
   category: string;
   stock: number;
-  image?: string;
+  image?: string; 
 }
 
 export default function PopularProduct() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+      const { baseURL, headers } = getApiConfig();
+  
 
   //  Map of keywords to images
   const imageMap: Record<string, string> = useMemo(
@@ -46,8 +49,7 @@ export default function PopularProduct() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(
-          "https://frontendcodingtest-production.up.railway.app/api/products", { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+        const res = await fetch(`${baseURL}/api/products`, { method: 'GET', headers: headers }
         );
         const data = await res.json();
 
@@ -77,7 +79,7 @@ export default function PopularProduct() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl text-[#141414] font-semibold">
-          Popular Products
+          Related Products
         </h2>
         <button className="text-[#525252] hover:underline text-base">
           View All
@@ -94,19 +96,19 @@ export default function PopularProduct() {
           No products found.
         </p>
       ) : (
-        // Product grid
+        //  Product grid
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {products.map((product) => (
             <Link
               key={product.id}
               href={{
                 pathname: `/product/${product.id}`,
-                query: { image: product.image || "/image5.png" },
+                query: { image: product.image || "/image5.png" }, 
               }}
             >
               <div className="relative w-full h-56 bg-gray-100 rounded-md flex items-center justify-center">
                 <Image
-                  src={product.image || "/image5.png"}
+                  src={product.image || "/image5.png"} 
                   alt={product.name}
                   width={150}
                   height={150}

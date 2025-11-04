@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import logo from "../../../public/image 16.png";
+import logo from "../../public/image 16.png";
 import {
   Search,
   Heart,
@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { useCart } from "@/app/context/CartContext";
+import { getApiConfig } from "@/lib/api-config";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,6 +25,8 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+      const { baseURL, headers } = getApiConfig();
+  
 
   const router = useRouter();
   const { cart } = useCart();
@@ -33,8 +36,7 @@ const totalItems = cart.length;
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch(
-          "https://frontendcodingtest-production.up.railway.app/api/categories", { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+        const res = await fetch(`${baseURL}/api/categories`, { method: 'GET', headers: headers }
         );
         const data = await res.json();
         if (Array.isArray(data.categories)) {

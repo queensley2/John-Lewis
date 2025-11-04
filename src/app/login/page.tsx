@@ -2,6 +2,7 @@
 
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { getApiConfig } from "@/lib/api-config";
 
 interface LoginForm {
   email: string;
@@ -13,6 +14,8 @@ export default function LoginPage() {
   const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+      const { baseURL, headers } = getApiConfig();
+  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,8 +29,7 @@ export default function LoginPage() {
 
     try {
       const res = await fetch(
-        "https://frontendcodingtest-production.up.railway.app/api/auth/login",
-        {
+`${baseURL}/api/auth/login`,        {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(form),
