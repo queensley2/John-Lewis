@@ -123,7 +123,7 @@ export default function PopularProduct() {
                     {product.name}
                   </h3>
                   <p className="font-semibold text-[#141414] text-xl mt-1">
-                    ₦{product.price.toLocaleString()}
+                    ${product.price.toLocaleString()}
                   </p>
                 </div>
                 <p className="text-gray-500 text-sm capitalize">

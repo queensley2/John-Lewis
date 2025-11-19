@@ -41,7 +41,6 @@ export default function ProductId() {
     sizes: [6, 8, 10, 14, 18, 20],
   };
 
-  // === States ===
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [showFullDescription, setShowFullDescription] = useState(false);

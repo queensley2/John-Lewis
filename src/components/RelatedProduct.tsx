@@ -103,12 +103,12 @@ export default function PopularProduct() {
               key={product.id}
               href={{
                 pathname: `/product/${product.id}`,
-                query: { image: product.image || "/image5.png" }, 
+                query: { image: product.image || "/image5.png" },
               }}
             >
               <div className="relative w-full h-56 bg-gray-100 rounded-md flex items-center justify-center">
                 <Image
-                  src={product.image || "/image5.png"} 
+                  src={product.image || "/image5.png"}
                   alt={product.name}
                   width={150}
                   height={150}
@@ -122,7 +122,7 @@ export default function PopularProduct() {
                     {product.name}
                   </h3>
                   <p className="font-semibold text-[#141414] text-xl mt-1">
-                    ₦{product.price.toLocaleString()}
+                    ${product.price.toLocaleString()}
                   </p>
                 </div>
                 <p className="text-gray-500 text-sm capitalize">
